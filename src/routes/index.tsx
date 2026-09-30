@@ -57,7 +57,7 @@ function Home() {
     <SiteLayout>
       <div className="grid md:grid-cols-[1fr_1.15fr] gap-12 items-center px-[5%] lg:px-[10%] py-10 bg-secondary">
         <div>
-          <h1 className="text-5xl md:text-6xl font-extrabold leading-[1.05] mb-5">Feed Hope,<br /><span className="text-primary">Not Waste</span></h1>
+          <h1 className="text-5xl md:text-6xl font-extrabold leading-[1.05] mb-5">Food Hope,<br /><span className="text-primary">Not Waste</span></h1>
           <p className="text-muted-foreground text-lg leading-relaxed max-w-xl mb-6">Join us in creating a world where no food goes to waste and no child goes hungry. Together, we connect generous food providers with those who need it most.</p>
           <div className="flex gap-3 flex-wrap mb-6">
             <Link to="/signup" className="btn btn-red">Donate Food</Link>
