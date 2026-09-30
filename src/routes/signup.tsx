@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -16,7 +16,8 @@ export const Route = createFileRoute("/signup")({
 
 function Signup() {
   const [err, setErr] = useState("");
-  const [done, setDone] = useState(false);
+  const navigate = useNavigate();
+  const done = false;
   const [busy, setBusy] = useState(false);
 
   async function submit(e: React.FormEvent<HTMLFormElement>) {
@@ -36,8 +37,10 @@ function Signup() {
         },
       },
     });
+    if (error) { setBusy(false); setErr(error.message); return; }
+    await supabase.auth.signOut();
     setBusy(false);
-    if (error) setErr(error.message); else setDone(true);
+    navigate({ to: "/login" });
   }
 
   return (
