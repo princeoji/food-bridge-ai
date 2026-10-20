@@ -11,6 +11,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Node for tests
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
@@ -21,6 +26,9 @@ jobs:
 
       - name: Typecheck
         run: bunx tsc --noEmit
+
+      - name: Test account and donation permissions
+        run: bun run test
 
       - name: Build
         run: bun run build
