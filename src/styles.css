@@ -263,6 +263,11 @@ body {
   }
 }
 
+/* Keep the public interface branded as FoodBridge, including hosted overlays. */
+#lovable-badge {
+  display: none !important;
+}
+
 @media (pointer: coarse) {
   .btn,
   .field {

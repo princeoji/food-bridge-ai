@@ -74,6 +74,10 @@ are not implemented or advertised as working features.
 
 ## Preserve this theme
 
+Public branding belongs to FoodBridge. The injected hosting badge is hidden by
+the targeted `#lovable-badge` rule in `src/styles.css`; metadata and the heart
+favicon use FoodBridge. Keep the hosting/build integration needed for publishing.
+
 Warm, approachable food rescue design: white surfaces, cream heroes, vivid red
 emphasis, dark text, pale gray secondary copy, softly rounded cards, subtle
 shadows, and red outline icons. The source of truth is src/styles.css.
