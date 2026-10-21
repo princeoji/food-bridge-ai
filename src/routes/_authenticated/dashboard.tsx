@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { SiteLayout } from "@/components/SiteLayout";
 import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
+import { DonationStatus } from "@/components/dashboard/DonationStatus";
 import { DeliveryDetails } from "@/components/dashboard/DeliveryDetails";
 import { VolunteerDashboard } from "@/components/dashboard/VolunteerDashboard";
 import {
@@ -471,7 +472,10 @@ function Dashboard() {
           </Link>
         </nav>
       </section>
-      <div id="dashboard-content" className="px-[5%] lg:px-[7%] py-6 space-y-5 scroll-mt-20">
+      <div
+        id="dashboard-content"
+        className="bg-workspace min-h-[60vh] px-[5%] lg:px-[7%] py-6 space-y-5 scroll-mt-20"
+      >
         {notice && (
           <div
             role={notice.error ? "alert" : "status"}
@@ -1097,30 +1101,11 @@ function DonationList({
           <article key={d.id} className="card-box p-4 flex flex-col gap-3 min-w-0">
             <div className="flex items-start justify-between gap-3">
               <h3 className="font-bold text-lg break-words">{d.food_name}</h3>
-              <span
-                className={
-                  "shrink-0 text-xs rounded-full px-2 py-1 font-bold " +
-                  (d.status === "delivered"
-                    ? "bg-foreground text-background"
-                    : "bg-accent text-primary")
-                }
-              >
-                {expired
-                  ? "Expired"
-                  : d.status === "available"
-                    ? "Available"
-                    : d.status === "claimed"
-                      ? "Claimed"
-                      : d.status === "picked_up"
-                        ? "Picked up"
-                        : d.status === "delivered"
-                          ? "Delivered"
-                          : "Needs review"}
-              </span>
+              <DonationStatus status={d.status} expired={expired} />
             </div>
             <p>
-              <strong className="text-primary text-xl">{d.quantity.toLocaleString()}</strong> meals
-              · {donor?.organisation_name || "Food partner"}
+              <strong className="text-foreground text-xl">{d.quantity.toLocaleString()}</strong>{" "}
+              meals · {donor?.organisation_name || "Food partner"}
             </p>
             <p className="text-sm text-muted-foreground flex items-start gap-2 break-words">
               <MapPin size={16} className="shrink-0 mt-0.5" />
@@ -1133,7 +1118,7 @@ function DonationList({
                 : "No collection deadline — please relist this food"}
             </p>
             {d.status === "available" && !expired && (
-              <p className="text-xs font-bold text-primary">{deadlineLabel(d.best_before)}</p>
+              <p className="text-xs font-bold text-warning">{deadlineLabel(d.best_before)}</p>
             )}
             <details className="text-sm rounded-lg bg-secondary p-3">
               <summary className="font-bold cursor-pointer">Food & pickup details</summary>

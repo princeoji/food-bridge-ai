@@ -3,6 +3,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { errorMessage, type Donation } from "@/lib/donations";
 
+import { DonationStatus } from "./DonationStatus";
+
 export function DeliveryDetails({ donation: d, role }: { donation: Donation; role: string }) {
   const client = useQueryClient();
   const [busy, setBusy] = useState(false);
@@ -71,7 +73,7 @@ export function DeliveryDetails({ donation: d, role }: { donation: Donation; rol
           : "Waiting for a volunteer";
   return (
     <div className="w-full rounded-lg bg-secondary p-3 space-y-3 text-sm">
-      <p className="font-bold text-primary">{stage}</p>
+      <DonationStatus status={d.status} label={stage} />
       {d.pickup_code && (
         <div>
           <p className="text-xs text-muted-foreground">Pickup code · Show this to the hotel</p>
@@ -94,7 +96,7 @@ export function DeliveryDetails({ donation: d, role }: { donation: Donation; rol
             return (
               <li
                 key={label}
-                className={complete ? "text-primary font-bold" : "text-muted-foreground"}
+                className={complete ? "text-success font-bold" : "text-muted-foreground"}
               >
                 {complete ? "✓" : "○"} {label}
               </li>
@@ -177,7 +179,7 @@ export function DeliveryDetails({ donation: d, role }: { donation: Donation; rol
       {notice && (
         <p
           role={failed ? "alert" : "status"}
-          className={failed ? "text-destructive" : "text-primary"}
+          className={failed ? "text-destructive" : "text-success"}
         >
           {notice}
         </p>

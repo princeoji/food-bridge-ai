@@ -12,7 +12,8 @@ import {
   Users,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { errorMessage, type Donation, type Profile } from "@/lib/donations";
+import { errorMessage, isExpired, type Donation, type Profile } from "@/lib/donations";
+import { DonationStatus } from "./DonationStatus";
 import { deadlineLabel } from "@/lib/dashboard";
 
 type Props = {
@@ -152,7 +153,18 @@ export function DashboardOverview({ profile, onListings, onClaims, onNew, onRepe
             <>
               <span className="flex justify-between items-start gap-2">
                 <span className="font-bold text-sm">{label}</span>
-                <Icon size={18} className="text-primary shrink-0" aria-hidden="true" />
+                <Icon
+                  size={18}
+                  className={
+                    "shrink-0 " +
+                    (label === "Delivered"
+                      ? "text-success"
+                      : Icon === Clock3
+                        ? "text-warning"
+                        : "text-muted-foreground")
+                  }
+                  aria-hidden="true"
+                />
               </span>
               <strong className="block text-2xl md:text-3xl font-extrabold tracking-tight mt-2 tabular-nums">
                 {value == null ? "—" : value.toLocaleString()}
@@ -195,7 +207,7 @@ export function DashboardOverview({ profile, onListings, onClaims, onNew, onRepe
         <div className="space-y-4">
           <div className="card-box p-4 md:p-4">
             <div className="flex items-center gap-2 mb-4">
-              <LayoutDashboard size={19} className="text-primary" />
+              <LayoutDashboard size={19} className="text-muted-foreground" />
               <h2 className="text-lg font-bold">Quick actions</h2>
             </div>
             <div className="grid sm:grid-cols-3 gap-3">
@@ -210,14 +222,14 @@ export function DashboardOverview({ profile, onListings, onClaims, onNew, onRepe
                 onClick={hotel ? () => onListings("active") : () => onClaims("active")}
                 className="rounded-xl border border-border bg-secondary p-4 text-left flex flex-col items-start gap-3 hover:border-primary"
               >
-                <ArrowDownToLine size={18} className="text-primary" />
+                <ArrowDownToLine size={18} className="text-warning" />
                 <span className="font-bold">Manage pickups</span>
               </button>
               <Link
                 to="/profile"
                 className="rounded-xl border border-border p-4 flex flex-col items-start gap-3 hover:border-primary"
               >
-                <Users size={18} className="text-primary" />
+                <Users size={18} className="text-muted-foreground" />
                 <span className="font-bold">Organisation settings</span>
               </Link>
             </div>
@@ -279,26 +291,27 @@ export function DashboardOverview({ profile, onListings, onClaims, onNew, onRepe
                   >
                     <div className="flex gap-3 items-center min-w-0">
                       <div className="size-8 rounded-xl bg-secondary flex items-center justify-center shrink-0">
-                        <Utensils size={18} className="text-primary" />
+                        <Utensils size={18} className="text-muted-foreground" />
                       </div>
                       <div>
                         <h3 className="font-bold break-words">{donation.food_name}</h3>
                         <p className="text-xs text-muted-foreground mt-1">
                           {donation.quantity} meals · Listed{" "}
                           {new Date(donation.created_at).toLocaleDateString()}
+                          {donation.status === "available" && !isExpired(donation) && (
+                            <span className="text-warning">
+                              {" "}
+                              · {deadlineLabel(donation.best_before)}
+                            </span>
+                          )}
                         </p>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-3 items-center">
-                      <span className="text-xs rounded-full bg-accent text-primary px-3 py-1 font-bold">
-                        {donation.status === "delivered"
-                          ? "Delivered"
-                          : donation.status === "picked_up"
-                            ? "On the way"
-                            : donation.status === "claimed"
-                              ? "Pickup pending"
-                              : deadlineLabel(donation.best_before)}
-                      </span>
+                      <DonationStatus
+                        status={donation.status}
+                        expired={donation.status === "available" && isExpired(donation)}
+                      />
                       {hotel ? (
                         <button
                           className="text-sm font-bold text-primary"
@@ -323,7 +336,7 @@ export function DashboardOverview({ profile, onListings, onClaims, onNew, onRepe
         </div>
         <aside className="space-y-3">
           <div className="card-box bg-secondary p-4">
-            <HeartHandshake className="text-primary mb-2" size={22} />
+            <HeartHandshake className="text-success mb-2" size={22} />
             <h2 className="text-lg font-bold">Your rescue progress</h2>
             {summary.data ? (
               <>
@@ -336,7 +349,7 @@ export function DashboardOverview({ profile, onListings, onClaims, onNew, onRepe
                 <progress
                   value={completed}
                   max={total || 1}
-                  className="w-full h-2 accent-[var(--primary)]"
+                  className="w-full h-2 accent-[var(--success)]"
                   aria-label="Completed donations"
                 />
                 <p className="mt-3 text-xs text-muted-foreground">
@@ -358,7 +371,7 @@ export function DashboardOverview({ profile, onListings, onClaims, onNew, onRepe
                 "Keep food safely packed and share allergen details.",
               ].map((step, index) => (
                 <li key={step} className="flex gap-3">
-                  <span className="rounded-full size-6 shrink-0 bg-accent text-primary flex items-center justify-center font-bold text-xs">
+                  <span className="rounded-full size-6 shrink-0 bg-muted text-muted-foreground flex items-center justify-center font-bold text-xs">
                     {index + 1}
                   </span>
                   <span className="text-muted-foreground leading-relaxed">{step}</span>

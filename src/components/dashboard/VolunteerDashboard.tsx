@@ -129,10 +129,10 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
           ))}
         </nav>
       </section>
-      <section className="px-[5%] lg:px-[7%] py-6 space-y-4">
+      <section className="bg-workspace min-h-[60vh] px-[5%] lg:px-[7%] py-6 space-y-4">
         <div className="flex justify-between flex-wrap gap-3 items-center">
           <h2 className="text-2xl font-bold flex items-center gap-2">
-            <Truck size={22} className="text-primary" />
+            <Truck size={22} className="text-muted-foreground" />
             {section === "available" ? "Orders waiting for a volunteer" : "Your deliveries"}
           </h2>
           <div className="flex gap-2">
@@ -185,7 +185,7 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
                       {d.food_name} · {d.quantity} meals
                     </h3>
                     <p className="text-sm flex gap-2">
-                      <MapPin size={16} className="text-primary shrink-0" />
+                      <MapPin size={16} className="text-muted-foreground shrink-0" />
                       <span>
                         <strong>Pickup:</strong> {d.pickup_address}
                       </span>
@@ -193,7 +193,7 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
                     <p className="text-sm">
                       <strong>Deliver to NGO:</strong> {d.delivery_address}
                     </p>
-                    <p className="text-xs text-primary font-bold">{deadlineLabel(d.best_before)}</p>
+                    <p className="text-xs text-warning font-bold">{deadlineLabel(d.best_before)}</p>
                     <p className="text-xs text-muted-foreground">
                       Accept only if you can collect safely before the deadline. The pickup code and
                       partner contacts appear after you accept.

@@ -89,13 +89,18 @@ shadows, and red outline icons. The source of truth is src/styles.css.
 | Primary red      | oklch(0.577 0.235 27.5)      |
 | Cream background | oklch(0.985 0.015 70)        |
 | Pale pink accent | oklch(0.95 0.03 20)          |
-| Muted text       | oklch(0.554 0.046 257.417)   |
+| Muted text       | oklch(0.49 0.025 257.417)    |
 | Borders/inputs   | oklch(0.929 0.013 255.508)   |
 | Base radius      | 0.5rem                       |
 | Font             | Arial, Helvetica, sans-serif |
 
 Use semantic Tailwind classes and register new OKLCH tokens in the existing
-theme. Shared custom controls use .btn, .btn-red, .field, and .card-box. Compact
+theme. Dashboard workspaces use a subtle neutral background behind white cards.
+Status labels include icons: green for Available/Delivered, amber for pending
+pickup, blue for On the way, and red for Expired/errors. Reserve red primarily
+for brand elements, primary actions, links, and active navigation.
+
+Shared custom controls use .btn, .btn-red, .field, and .card-box. Compact
 desktop controls have a 36px minimum height, with 44px minimum controls and
 16px input text on touch devices. Body text is 14px, with visible focus and
 disabled states.
