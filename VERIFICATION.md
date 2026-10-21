@@ -4,6 +4,14 @@ Date: 2026-10-20. Branch: codex/complete-foodhope.
 
 ## Passed
 
+- Published the synced `main` version at
+  https://foodbridge-ai-connector.lovable.app/ on 2026-10-21 through Lovable's
+  free plan. Public home and Volunteer/Hotel/NGO dashboards loaded with live data.
+  All three account logins and sign-out passed browser checks. One stale
+  automation tab became unresponsive; the NGO check passed in a fresh tab.
+  At phone width 390 and
+  tablet width 768, document width matched viewport width with no horizontal
+  overflow. The original desktop viewport was restored after these checks.
 - Frozen Bun dependency installation: no lockfile changes required.
 - Node test suite: 13 tests passed, including all five migrations and 92 SQL
   assertions executed in an isolated PostgreSQL/PGlite database.
@@ -37,14 +45,14 @@ collection-deadline labels, and CSV export escaping/formula neutralization.
 
 - The Supabase connector only exposes a different inactive project; access to
   the application's backend is available through the authenticated Lovable UI.
-- No email sending or website deployment was performed. The full Volunteer
+- No email sending was performed. The full Volunteer
   handoff was verified through hosted SQL using simulated request identity and
   database roles, rather than a browser journey or a complete JWT handoff.
   Contact submission's hosted API smoke test remains outstanding.
-- The browser security gate rejected the local preview origin. Browser
-  interaction was used for Lovable database administration, but no application
-  interaction or visual checks were completed. Source review and automated
-  tests are not a replacement for desktop/mobile hosted smoke tests.
+- The browser security gate rejected the local preview origin. Hosted browser
+  checks were subsequently possible on the public production domain, including
+  sign-in and responsive checks above. A full browser delivery handoff remains
+  untested; its database authorization/state assertions passed separately.
 - PGlite uses one serialized connection. The separate two-session PostgreSQL
   concurrency recipe has not been executed against a hosted database.
 - Full-repository ESLint remains blocked by inherited failures in untouched

@@ -1,5 +1,22 @@
 # FoodBridge live setup
 
+## Live website and updates
+
+Published 2026-10-21: https://foodbridge-ai-connector.lovable.app/
+
+The existing Lovable project hosts the current application on its free plan
+using the existing managed database. There was no paid upgrade or custom-domain
+purchase. Free hosting is subject to Lovable's included Cloud usage limits:
+https://lovable.dev/pricing
+
+Future requested project edits should also be published to this same URL.
+Commit and push/merge tested source to the connected `main` branch, wait for
+the GitHub commit to appear in Lovable, and click Publish -> Publish changes.
+Verify the completed update and the public website. A GitHub push by itself
+only syncs source; it does not publish a new production version. Database
+changes must be applied separately before publishing dependent UI changes.
+Listings, claims, and deliveries use the same database from every device.
+
 The core implementation is ready for a configured Supabase environment. The
 checked-in SQL has been tested in isolated PostgreSQL. On 2026-10-20,
 `20261020120000_secure_core_workflows.sql` was applied to the existing

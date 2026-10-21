@@ -1,6 +1,6 @@
 # FoodBridge project guide
 
-Updated 2026-10-20. Original repository review: commit f9d3098.
+Updated 2026-10-21. Original repository review: commit f9d3098.
 Implementation branch: codex/complete-foodhope.
 
 ## User intent and scope
@@ -14,7 +14,23 @@ The user authorised core implementation after the initial review. The source
 now contains the changes below. The core workflow migration was applied to the
 existing Lovable-managed database on 2026-10-20 through Lovable's SQL editor.
 Hosted Hotel listing, NGO claim, partner visibility, and release were verified
-with test accounts. Website deployment remains outstanding; read DEPLOYMENT.md.
+with test accounts. The current app was published on 2026-10-21 at
+https://foodbridge-ai-connector.lovable.app/; read DEPLOYMENT.md for updates.
+
+## Hosting and future updates
+
+The user wants to use the same hosted project on phones and tablets, and has
+authorized publishing future requested project changes to this same website.
+Use the existing Lovable project and free plan; do not enable paid upgrades,
+custom domains, or paid credit top-ups without explicit authorization.
+
+After future code changes: run the relevant checks, commit and push/merge to
+the connected `main` branch, wait for Lovable to sync, then use Publish ->
+Publish changes and verify the live result. GitHub sync alone does not update
+the public website. Apply needed database migrations separately through the
+existing Lovable backend before publishing code that depends on them.
+Food listings and claim updates already share the same database across devices
+and do not require republishing. Preserve the existing database and public URL.
 
 ## Product and implemented flows
 
