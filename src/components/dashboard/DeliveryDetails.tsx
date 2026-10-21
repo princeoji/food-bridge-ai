@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { errorMessage, type Donation } from "@/lib/donations";
 
 import { DonationStatus } from "./DonationStatus";
+import { DeliveryCheckpoints } from "./DeliveryCheckpoints";
 
 export function DeliveryDetails({ donation: d, role }: { donation: Donation; role: string }) {
   const client = useQueryClient();
@@ -85,25 +86,29 @@ export function DeliveryDetails({ donation: d, role }: { donation: Donation; rol
           <strong>Deliver to:</strong> {d.delivery_address}
         </p>
       )}
-      <ol className="flex flex-wrap gap-x-3 gap-y-1 text-xs" aria-label="Delivery progress">
-        {["NGO claimed", "Volunteer accepted", "Hotel confirmed pickup", "Delivered"].map(
-          (label, index) => {
-            const complete =
-              index === 0 ||
-              (index === 1 && !!d.volunteer_id) ||
-              (index === 2 && !!d.picked_up_at) ||
-              (index === 3 && d.status === "delivered");
-            return (
-              <li
-                key={label}
-                className={complete ? "text-success font-bold" : "text-muted-foreground"}
-              >
-                {complete ? "✓" : "○"} {label}
-              </li>
-            );
-          },
-        )}
-      </ol>
+      {role === "Volunteer" ? (
+        <DeliveryCheckpoints donation={d} />
+      ) : (
+        <ol className="flex flex-wrap gap-x-3 gap-y-1 text-xs" aria-label="Delivery progress">
+          {["NGO claimed", "Volunteer accepted", "Hotel confirmed pickup", "Delivered"].map(
+            (label, index) => {
+              const complete =
+                index === 0 ||
+                (index === 1 && !!d.volunteer_id) ||
+                (index === 2 && !!d.picked_up_at) ||
+                (index === 3 && d.status === "delivered");
+              return (
+                <li
+                  key={label}
+                  className={complete ? "text-success font-bold" : "text-muted-foreground"}
+                >
+                  {complete ? "✓" : "○"} {label}
+                </li>
+              );
+            },
+          )}
+        </ol>
+      )}
       {d.picked_up_at && (
         <p className="text-xs text-muted-foreground">
           Picked up {new Date(d.picked_up_at).toLocaleString()}

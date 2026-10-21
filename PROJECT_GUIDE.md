@@ -47,6 +47,11 @@ communities in need. The intended journey is Donate -> Pickup -> Distribute.
   for available, active, and delivered orders. One Volunteer accepts each order.
   The Hotel verifies the code to mark pickup; the assigned Volunteer alone
   confirms delivery. Codes and contact phones are private until assignment.
+  Volunteer navigation opens Active deliveries by default, with separate
+  Available deliveries and Delivery history sections. Active orders can be
+  filtered by awaiting Hotel pickup or on the way to the NGO. Each assigned
+  order shows a four-checkpoint timeline driven by saved order state, with
+  complete/current/pending indicators and instructions for the next action.
 - Dashboard results are paginated and refresh every 10 seconds and on focus.
   Successful changes also refresh other dashboard tabs on the same origin
   immediately through BroadcastChannel; no account data is sent in the message.

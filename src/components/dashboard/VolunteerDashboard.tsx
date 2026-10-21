@@ -10,7 +10,7 @@ import { errorMessage, type Profile } from "@/lib/donations";
 
 export function VolunteerDashboard({ profile }: { profile: Profile }) {
   const client = useQueryClient();
-  const [section, setSection] = useState<"available" | "mine">("available");
+  const [section, setSection] = useState<"available" | "active" | "history">("active");
   const [page, setPage] = useState(0);
   const [status, setStatus] = useState("active");
   const [busy, setBusy] = useState<string | null>(null);
@@ -36,8 +36,8 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
     },
   });
   const mine = useQuery({
-    queryKey: ["donations", "volunteer-mine", profile.id, page, status],
-    enabled: section === "mine",
+    queryKey: ["donations", "volunteer-mine", profile.id, page, section, status],
+    enabled: section !== "available",
     refetchInterval: 10000,
     refetchOnWindowFocus: true,
     queryFn: async () => {
@@ -46,9 +46,11 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
         .select("*", { count: "exact" })
         .eq("volunteer_id", profile.id);
       query =
-        status === "delivered"
+        section === "history"
           ? query.eq("status", "delivered")
-          : query.in("status", ["claimed", "picked_up"]);
+          : status === "active"
+            ? query.in("status", ["claimed", "picked_up"])
+            : query.eq("status", status);
       const { data, error, count } = await query
         .order("created_at", { ascending: false })
         .order("id")
@@ -77,7 +79,7 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
       const { data, error } = await supabase.rpc("accept_delivery", { p_donation_id: id });
       if (error) throw error;
       if (!data?.id) throw new Error("This order could not be accepted. Refresh and try again.");
-      setSection("mine");
+      setSection("active");
       setPage(0);
       setStatus("active");
       if (typeof BroadcastChannel !== "undefined") {
@@ -113,8 +115,8 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
         <p className="text-muted-foreground mt-2">
           Accept an order → Show the code to the hotel → Collect food → Deliver to the NGO.
         </p>
-        <nav className="flex gap-3 mt-4" aria-label="Volunteer sections">
-          {(["available", "mine"] as const).map((item) => (
+        <nav className="flex flex-wrap gap-2 mt-4" aria-label="Volunteer sections">
+          {(["available", "active", "history"] as const).map((item) => (
             <button
               key={item}
               className={"btn " + (section === item ? "btn-red" : "")}
@@ -124,7 +126,11 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
                 setPage(0);
               }}
             >
-              {item === "available" ? "Available deliveries" : "My deliveries"}
+              {item === "available"
+                ? "Available deliveries"
+                : item === "active"
+                  ? "Active deliveries"
+                  : "Delivery history"}
             </button>
           ))}
         </nav>
@@ -133,10 +139,14 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
         <div className="flex justify-between flex-wrap gap-3 items-center">
           <h2 className="text-2xl font-bold flex items-center gap-2">
             <Truck size={22} className="text-muted-foreground" />
-            {section === "available" ? "Orders waiting for a volunteer" : "Your deliveries"}
+            {section === "available"
+              ? "Orders waiting for a volunteer"
+              : section === "active"
+                ? "Active deliveries"
+                : "Completed deliveries"}
           </h2>
           <div className="flex gap-2">
-            {section === "mine" && (
+            {section === "active" && (
               <select
                 className="field w-auto"
                 aria-label="Delivery status"
@@ -146,8 +156,9 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
                   setPage(0);
                 }}
               >
-                <option value="active">Active</option>
-                <option value="delivered">Delivered</option>
+                <option value="active">All active deliveries</option>
+                <option value="claimed">Awaiting hotel pickup</option>
+                <option value="picked_up">On the way to NGO</option>
               </select>
             )}
             <button
@@ -159,6 +170,29 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
             </button>
           </div>
         </div>
+        {section === "active" && (
+          <div className="card-box p-4">
+            <h3 className="font-bold mb-2">Your delivery flow</h3>
+            <ol className="grid sm:grid-cols-3 gap-3 text-sm">
+              {[
+                "Accept an order and get its pickup code",
+                "Show the code; the hotel confirms pickup",
+                "Deliver to the NGO and finish delivery",
+              ].map((step, index) => (
+                <li key={step} className="flex gap-2 items-start">
+                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-secondary font-bold text-xs">
+                    {index + 1}
+                  </span>
+                  <span className="text-muted-foreground">{step}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="text-xs text-muted-foreground mt-3">
+              Each active order shows its own checkpoints below. Only the hotel can confirm pickup;
+              delivery completion unlocks after that.
+            </p>
+          </div>
+        )}
         {notice && (
           <p role="alert" className="card-box p-3 text-destructive">
             {notice}
@@ -211,9 +245,29 @@ export function VolunteerDashboard({ profile }: { profile: Profile }) {
             ) : (
               <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
                 {!mine.data?.rows.length && (
-                  <p className="text-muted-foreground">
-                    No {status} deliveries. Accept an available order to get started.
-                  </p>
+                  <div className="card-box p-5 md:col-span-2 xl:col-span-3">
+                    <h3 className="font-bold">
+                      {section === "history"
+                        ? "No completed deliveries yet"
+                        : status === "active"
+                          ? "No active deliveries yet"
+                          : "No deliveries at this checkpoint"}
+                    </h3>
+                    <p className="text-muted-foreground mt-1">
+                      {section === "history"
+                        ? "Finished deliveries will appear here once you hand the food to the NGO and confirm delivery."
+                        : "Accept an available order to see its pickup code, addresses, and live checkpoints here."}
+                    </p>
+                    <button
+                      className="btn mt-3"
+                      onClick={() => {
+                        setSection("available");
+                        setPage(0);
+                      }}
+                    >
+                      Browse available deliveries
+                    </button>
+                  </div>
                 )}
                 {mine.data?.rows.map((d) => (
                   <article key={d.id} className="card-box p-4 space-y-3">
